@@ -199,3 +199,9 @@ exec_always --no-startup-id $HOME/.config/polybar/polybar_launch.sh
 
 # wallpaper
 exec_always --no-startup-id feh --bg-fill $HOME/Pictures/wallpaper.jpg
+
+# window title colors
+client.focused          #333333 #333333 #FFFFFF #333333
+client.unfocused        #202020 #202020 #888888 #202020
+client.focused_inactive #202020 #202020 #888888 #202020
+client.urgent            #800000 #800000 #FFFFFF #800000
