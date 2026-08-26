@@ -1,98 +1,179 @@
 # i3 config file (v4)
 #
-# Please see https://i3wm.org/docs/userguide.html for a complete reference!
+# Clean default i3 config +:
+# - Rofi launcher
+# - Polybar
+# - Wallpaper
+# - Firefox -> Workspace 2
+# - Named workspaces
+# - Gap control
+#
+# Paths use $HOME so this works with your Arch username.
 
 #################
 # Modifier Keys #
 #################
 
 set $mod Mod4
+
+
+################
+# Font Settings
+################
+
+font pango:monospace 8
+
+
+########################
+# XDG Autostart / Lock
+########################
+
+# Start XDG autostart .desktop files
+exec --no-startup-id dex --autostart --environment i3
+
+# Lock screen before suspend
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
+
+#####################
+# Network Management
+#####################
+
+# NetworkManager tray applet
+exec --no-startup-id nm-applet
+
+
+################
+# Audio Controls
+################
+
+set $refresh_i3status killall -SIGUSR1 i3status
+
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+
+########################
+# Window Mouse Behavior
+########################
+
 floating_modifier $mod
+
 tiling_drag modifier titlebar
 
-############################
-# Color shemes for windows #
-############################
+
+####################
+# Window Appearance
+####################
+
+# Uncomment these if you want the black theme from the custom config.
+
+# client.focused          #000000 #000000 #bcbbbc #000000
+# client.unfocused        #363636 #363636 #969696 #363636
+# client.focused_inactive #363636 #363636 #969696 #363636
+# client.urgent           #ff0000 #ff0000 #ffffff #ff0000
 
 
-#                       border          background      text            indicator (a line which shows where the next window will be placed)
-client.focused          #000000         #000000         #bcbbbc         #000000
-client.unfocused        #363636         #363636         #969696         #363636
-client.focused_inactive #363636         #363636         #969696         #363636
-client.urgent           #ff0000         #ff0000         #ffffff         #ff0000
+####################
+# Terminal
+####################
+
+bindsym $mod+Return exec i3-sensible-terminal
 
 
-#########
-# Fonts #
-#########
+####################
+# Kill Window
+####################
 
-# HTC_NOTE: modify the font size depending on your setup
-font pango:MartianMono Nerd Font Propo Condensed Medium 8
+bindsym $mod+Shift+q kill
 
-#######################
-# Common Key Bindings #
-#######################
 
-bindsym $mod+Shift+c reload                                                       # reload the configuration file
-bindsym $mod+Shift+r restart                                                      # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
-                                                                                  # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
-bindsym $mod+r mode "resize"
-bindsym $mod+shift+l exec /home/kali/.config/i3/scripts/lock
-# bindsym $mod+h split h                                                            # split in horizontal orientation
-# bindsym $mod+v split v                                                            # split in vertical orientation
-# bindsym $mod+f fullscreen toggle                                                  # enter fullscreen mode for the focused container
-# change container layout (stacked, tabbed, toggle split)
-# bindsym $mod+s layout stacking
-# bindsym $mod+w layout tabbed
-# bindsym $mod+e layout toggle split
-bindsym $mod+Shift+space floating toggle                                           # toggle tiling / floating
-# bindsym $mod+space focus mode_toggle                                              # change focus between tiling / floating windows
-# bindsym $mod+a focus parent                                                       # focus the parent container
-# bindsym $mod+d focus child                                                        # focus the child container
-# Bindings that move the active window to different positions
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
+####################
+# Launcher - Rofi
+####################
+
+# Super + D opens Rofi
+bindsym $mod+d exec --no-startup-id rofi -show drun
+
+
+####################
+# Focus
+####################
+
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+
+# Arrow keys
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
-bindsym $mod+k kill
-bindsym $mod+Return exec terminator
-# HTC_NOTE: - the `-dpi 192`` may not be applicable for you, you can change it or remove
-#           it entirely.
-bindsym $mod+shift+d exec --no-startup-id rofi \
-                          -show run \
-                          -dpi 192 \
-                          -config /home/kali/.config/rofi/rofi.rasi
 
-#####################
-# External Programs #
-#####################
-# NOTE: There are also external programs launched through key bindings above
 
-exec --no-startup-id dex --autostart --environment i3
-exec --no-startup-id xsettingsd
-exec_always --no-startup-id feh --bg-fill /home/kali/Pictures/wallpaper.jpg
-# Use this for VMWare guests (e.g Vmware fusion)
-# exec_always --no-startup-id /usr/bin/vmware-user-suid-wrapper                     # Make sure copy paste between host and guest and vice versa is working
-# exec_always --no-startup-id /usr/bin/xrandr --output Virtual-1 --mode 1792x994    # Make sure guest size is correct
-exec_always --no-startup-id /usr/bin/picom -f --backend xrender \
-                                              --config /home/kali/.config/picom/picom.conf \
-                                              --fade-in-step=1 \
-                                              --fade-out-step=1 \
-                                              --fade-delta=0                        # For transparent backgrounds
-exec_always --no-startup-id /home/kali/.config/polybar/polybar_launch.sh
+####################
+# Move Windows
+####################
 
-##############
-# Workspaces #
-##############
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
 
-set $ws1 "1:  Terminal"
-set $ws2 "2:  Internet"
-set $ws3 "3"
+# Arrow keys
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+
+####################
+# Split
+####################
+
+bindsym $mod+h split h
+bindsym $mod+v split v
+
+
+####################
+# Fullscreen
+####################
+
+bindsym $mod+f fullscreen toggle
+
+
+####################
+# Layout
+####################
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+
+####################
+# Floating
+####################
+
+bindsym $mod+Shift+space floating toggle
+
+bindsym $mod+space focus mode_toggle
+
+bindsym $mod+a focus parent
+
+
+####################
+# Workspaces
+####################
+
+# Named workspaces
+
+set $ws1 "1: Terminal"
+set $ws2 "2: Internet"
+set $ws3 "3: Files"
 set $ws4 "4"
 set $ws5 "5"
 set $ws6 "6"
@@ -100,6 +181,11 @@ set $ws7 "7"
 set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
+
+
+####################
+# Switch Workspace
+####################
 
 bindsym $mod+1 workspace number $ws1
 bindsym $mod+2 workspace number $ws2
@@ -112,6 +198,11 @@ bindsym $mod+8 workspace number $ws8
 bindsym $mod+9 workspace number $ws9
 bindsym $mod+0 workspace number $ws10
 
+
+####################
+# Move Window To Workspace
+####################
+
 bindsym $mod+Shift+1 move container to workspace number $ws1
 bindsym $mod+Shift+2 move container to workspace number $ws2
 bindsym $mod+Shift+3 move container to workspace number $ws3
@@ -123,67 +214,119 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
+
+####################
+# Firefox -> Workspace 2
+####################
+
 # Firefox always opens on Workspace 2
 for_window [class="(?i)^firefox$"] move to workspace $ws2
-# You can see the class names using `xprop` command
 
-###########
-# Windows #
-###########
 
-# I haven't used this yet
+####################
+# Startup Programs
+####################
+
+# Wallpaper
+#
+# Change wallpaper.jpg to your actual wallpaper filename.
+exec_always --no-startup-id feh --bg-fill $HOME/Pictures/wallpaper.jpg
+
+
+####################
+# Polybar
+####################
+
+# Start Polybar
+#
+# Expected script:
+# $HOME/.config/polybar/polybar_launch.sh
+
+exec_always --no-startup-id $HOME/.config/polybar/polybar_launch.sh
+
+
+####################
+# Resize Mode
+####################
+
 mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
 
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
+        # Keyboard
         bindsym j resize shrink width 10 px or 10 ppt
         bindsym k resize grow height 10 px or 10 ppt
         bindsym l resize shrink height 10 px or 10 ppt
         bindsym semicolon resize grow width 10 px or 10 ppt
 
-        # same bindings, but for the arrow keys
+        # Arrow keys
         bindsym Left resize shrink width 10 px or 10 ppt
         bindsym Down resize grow height 10 px or 10 ppt
         bindsym Up resize shrink height 10 px or 10 ppt
         bindsym Right resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape or $mod+r
+        # Exit resize mode
         bindsym Return mode "default"
         bindsym Escape mode "default"
         bindsym $mod+r mode "default"
 }
 
+bindsym $mod+r mode "resize"
+
+
+####################
+# Gap Settings
+####################
+
+# Default gaps
 gaps inner 15
 gaps outer 5
 
-set $mode_gaps Gaps: (o)uter, (i)nner, (h)orizontal, (v)ertical, (t)op, (r)ight, (b)ottom, (l)eft
-set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
-set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
-set $mode_gaps_horiz Horizontal Gaps: +|-|0 (local), Shift + +|-|0 (global)
-set $mode_gaps_verti Vertical Gaps: +|-|0 (local), Shift + +|-|0 (global)
-set $mode_gaps_top Top Gaps: +|-|0 (local), Shift + +|-|0 (global)
-set $mode_gaps_right Right Gaps: +|-|0 (local), Shift + +|-|0 (global)
-set $mode_gaps_bottom Bottom Gaps: +|-|0 (local), Shift + +|-|0 (global)
-set $mode_gaps_left Left Gaps: +|-|0 (local), Shift + +|-|0 (global)
+
+####################
+# Gap Control
+####################
+
+set $mode_gaps "Gaps: (o)uter, (i)nner, (h)orizontal, (v)ertical, (t)op, (r)ight, (b)ottom, (l)eft"
+
+set $mode_gaps_outer "Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)"
+set $mode_gaps_inner "Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)"
+set $mode_gaps_horiz "Horizontal Gaps: +|-|0 (local), Shift + +|-|0 (global)"
+set $mode_gaps_verti "Vertical Gaps: +|-|0 (local), Shift + +|-|0 (global)"
+set $mode_gaps_top "Top Gaps: +|-|0 (local), Shift + +|-|0 (global)"
+set $mode_gaps_right "Right Gaps: +|-|0 (local), Shift + +|-|0 (global)"
+set $mode_gaps_bottom "Bottom Gaps: +|-|0 (local), Shift + +|-|0 (global)"
+set $mode_gaps_left "Left Gaps: +|-|0 (local), Shift + +|-|0 (global)"
+
+
+# Enter gap control
 bindsym $mod+Shift+g mode "$mode_gaps"
 
+
+####################
+# Main Gap Menu
+####################
+
 mode "$mode_gaps" {
-        bindsym o      mode "$mode_gaps_outer"
-        bindsym i      mode "$mode_gaps_inner"
-        bindsym h      mode "$mode_gaps_horiz"
-        bindsym v      mode "$mode_gaps_verti"
-        bindsym t      mode "$mode_gaps_top"
-        bindsym r      mode "$mode_gaps_right"
-        bindsym b      mode "$mode_gaps_bottom"
-        bindsym l      mode "$mode_gaps_left"
+
+        bindsym o mode "$mode_gaps_outer"
+        bindsym i mode "$mode_gaps_inner"
+        bindsym h mode "$mode_gaps_horiz"
+        bindsym v mode "$mode_gaps_verti"
+        bindsym t mode "$mode_gaps_top"
+        bindsym r mode "$mode_gaps_right"
+        bindsym b mode "$mode_gaps_bottom"
+        bindsym l mode "$mode_gaps_left"
+
         bindsym Return mode "$mode_gaps"
         bindsym Escape mode "default"
 }
 
+
+####################
+# Outer Gaps
+####################
+
 mode "$mode_gaps_outer" {
+
         bindsym plus  gaps outer current plus 5
         bindsym minus gaps outer current minus 5
         bindsym 0     gaps outer current set 0
@@ -195,7 +338,14 @@ mode "$mode_gaps_outer" {
         bindsym Return mode "$mode_gaps"
         bindsym Escape mode "default"
 }
+
+
+####################
+# Inner Gaps
+####################
+
 mode "$mode_gaps_inner" {
+
         bindsym plus  gaps inner current plus 5
         bindsym minus gaps inner current minus 5
         bindsym 0     gaps inner current set 0
@@ -207,7 +357,14 @@ mode "$mode_gaps_inner" {
         bindsym Return mode "$mode_gaps"
         bindsym Escape mode "default"
 }
+
+
+####################
+# Horizontal Gaps
+####################
+
 mode "$mode_gaps_horiz" {
+
         bindsym plus  gaps horizontal current plus 5
         bindsym minus gaps horizontal current minus 5
         bindsym 0     gaps horizontal current set 0
@@ -219,7 +376,14 @@ mode "$mode_gaps_horiz" {
         bindsym Return mode "$mode_gaps"
         bindsym Escape mode "default"
 }
+
+
+####################
+# Vertical Gaps
+####################
+
 mode "$mode_gaps_verti" {
+
         bindsym plus  gaps vertical current plus 5
         bindsym minus gaps vertical current minus 5
         bindsym 0     gaps vertical current set 0
@@ -231,7 +395,14 @@ mode "$mode_gaps_verti" {
         bindsym Return mode "$mode_gaps"
         bindsym Escape mode "default"
 }
+
+
+####################
+# Top Gaps
+####################
+
 mode "$mode_gaps_top" {
+
         bindsym plus  gaps top current plus 5
         bindsym minus gaps top current minus 5
         bindsym 0     gaps top current set 0
@@ -243,7 +414,14 @@ mode "$mode_gaps_top" {
         bindsym Return mode "$mode_gaps"
         bindsym Escape mode "default"
 }
+
+
+####################
+# Right Gaps
+####################
+
 mode "$mode_gaps_right" {
+
         bindsym plus  gaps right current plus 5
         bindsym minus gaps right current minus 5
         bindsym 0     gaps right current set 0
@@ -255,7 +433,14 @@ mode "$mode_gaps_right" {
         bindsym Return mode "$mode_gaps"
         bindsym Escape mode "default"
 }
+
+
+####################
+# Bottom Gaps
+####################
+
 mode "$mode_gaps_bottom" {
+
         bindsym plus  gaps bottom current plus 5
         bindsym minus gaps bottom current minus 5
         bindsym 0     gaps bottom current set 0
@@ -267,7 +452,14 @@ mode "$mode_gaps_bottom" {
         bindsym Return mode "$mode_gaps"
         bindsym Escape mode "default"
 }
+
+
+####################
+# Left Gaps
+####################
+
 mode "$mode_gaps_left" {
+
         bindsym plus  gaps left current plus 5
         bindsym minus gaps left current minus 5
         bindsym 0     gaps left current set 0
@@ -281,4 +473,23 @@ mode "$mode_gaps_left" {
 }
 
 
-bindsym $mod+d exec --no-startup-id rofi -show drun
+####################
+# Reload / Restart / Exit
+####################
+
+bindsym $mod+Shift+c reload
+
+bindsym $mod+Shift+r restart
+
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+
+
+####################
+# i3 Bar
+####################
+
+# Disabled because Polybar is being used.
+#
+# bar {
+#     status_command i3status
+# }
