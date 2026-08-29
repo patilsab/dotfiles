@@ -13,7 +13,7 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:MartianMono Nerd Font Propo Condensed Medium 8
+font pango:JetBrainsMono Nerd Font 9
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -199,6 +199,7 @@ exec_always --no-startup-id $HOME/.config/polybar/polybar_launch.sh
 
 # wallpaper
 exec_always --no-startup-id feh --bg-fill $HOME/Pictures/wallpaper.jpg
+
 
 # window title colors
 client.focused          #333333 #333333 #FFFFFF #333333
